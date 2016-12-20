@@ -17,4 +17,6 @@ git log --oneline --graph
 #逆向查看日志
 git log --reverse --oneline
 git log --author=Linux --oneline -5
-
+git log --pretty=oneline  #这个能查看到所有id
+#查看差异
+git diff file
