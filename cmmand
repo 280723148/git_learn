@@ -90,5 +90,98 @@ git clone git@github.com:280723148/git_learn.git
 #==============================================================================================================
 
 #分支管理
+#创建分支
+git branch branchname
+#切换分支
+git checkout branchname
+#创建并切换分支
+git checkout -b branchname
+#查看当前所有分支
+git branch
+#合并分支 如果dev分支新增加文件，我们在master分支上就可以将dev的合并过来
+git merge dev
+#删除分支
+git branch -d branchname
+#开发一个新feature，最好新建一个分支
+#如果要丢弃一个没有被合并过的分支，可以通过git branch -D <name>强行删除
+
+#合并不是每次都能成功的，当dev分支新提交了个a文件的修改，master分支也提交了a文件的修改，但这两个修改过不一样
+#这时候在master分支上合并dev分支就会出错，这个时候就得直接修改master中的a文件然后提交了
 
 
+#小节：
+#Git鼓励大量使用分支：
+#查看分支：git branch
+#创建分支：git branch <name>
+#切换分支：git checkout <name>
+#创建+切换分支：git checkout -b <name>
+#合并某分支到当前分支：git merge <name>
+#删除分支：git branch -d <name>
+
+#bug分支
+#软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，由于分支是如此的强大，所以，每个bug都可以通过
+#一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。
+#git stash的使用，当我们在dev分支开发，可能要2天完成，临时需要解决一个master的bug，这时肯定要新建一个bug分支
+#但当前的dev环境不能破坏，这时就可以使用stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作
+git stash                 #先保存dev分支环境
+git checkout master       #切换到master分支
+git checkout -b bug       #新建bug分支并切换到bug分支
+#修复bug文件bug.txt
+git add bug.txt
+git commit -m "fix bug "
+git checkout master       #bug分支上修改完成回到master分支
+git merge --no-ff -m "merged bug fix " bug #使用强制方式合并bug分支到master分支
+git branch -d bug         #删除bug分支，bug修改完成
+git checkout dev          #返回之前工作的dev分支
+git status                #此时dev分支是干净的
+git stash list            #查看刚才stash的暂存内容
+#工作现场还在，Git把stash内容存在某个地方了，但是需要恢复一下，有两个办法
+#一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除
+#一种是使用git stash pop，恢复的同时把stash内容也删除
+git stash pop              
+git stash list             #此时再查看就看不到stash内容了
+#你可以多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash，用命令：
+git stash apply stash@{0}
+#小结：修复bug时，我们会通过创建新的bug分支进行修复，然后合并，最后删除；
+#当手头工作没有完成时，先把工作现场git stash一下，然后去修复bug，修复后，再git stash pop，回到工作现场。
+
+
+#多人合作
+#当你从远程仓库克隆时，实际上Git自动把本地的master分支和远程的master分支对应起来了，并且，远程仓库的默认名称是origin
+#查看远程库信息
+git remote
+git remote -v #显示更加详细的信息
+#推送分支，就是把该分支上的所有本地提交推送到远程库。推送时，要指定本地分支，
+#这样，Git就会把该分支推送到远程库对应的远程分支上
+git push origin master 
+git push origin dev    #推送dev分支
+
+#=========================================================================================================
+
+#标签管理
+#在当前commitId下打tag
+git tag V1.0
+#打标签时候带上说明 -a 制定标签名 -m 指定标签说明
+git tag -a V1.0 -m "version 0.1 released" 
+#查看所有标签
+git tag
+#给历史commitid打标签
+git tag V0.9 commit_id
+#查看某个标签
+git show <tagname>
+#如果标签打错了可以删除
+git tag -d V0.1
+#因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。
+git push origin <tagname>
+#或者，一次性推送全部尚未推送到远程的本地标签
+git push origin --tags
+#如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除,然后，从远程删除。删除命令也是push，但是格式如下
+git tag -d <tagname> #本地删除
+git push origin :refs/tags/<tagname>
+#小结
+#命令git push origin <tagname>可以推送一个本地标签；
+#命令git push origin --tags可以推送全部未推送过的本地标签；
+#命令git tag -d <tagname>可以删除一个本地标签；
+#命令git push origin :refs/tags/<tagname>可以删除一个远程标签
+
+#==========================================================================================================
