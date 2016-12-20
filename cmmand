@@ -1,0 +1,20 @@
+git init
+git add 
+git commit -m "dfaf"
+git status -s
+git log 
+git log --oneline
+#查看分支
+git branch
+#切换分支
+git checkout + 分支
+#删除分支
+git branch -d (branchname)
+#合并分支
+git merge (branchname)
+#查看log
+git log --oneline --graph
+#逆向查看日志
+git log --reverse --oneline
+git log --author=Linux --oneline -5
+
